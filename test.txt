@@ -1,0 +1,18 @@
+void main()
+{
+    int a = -3.1415, b="ddd";
+    int arr[100];
+    while (a > 0) { //ffaaqqq
+        a = a - 1;
+    }
+    int c;
+    for(c=0;c<9;c=c+1){
+        c=c-1;
+    }   
+    if(c[29]>0){
+        return 0;
+    }else{
+        return 0.1;
+    }
+    print(a);
+}
