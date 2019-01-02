@@ -37,10 +37,14 @@ add_assign  "+="
 sub_assign  "-="
 mul_assign  "*="
 div_assign  "/="
+logicand    \&\&
+logicor     \|\|
 id ([_a-zA-Z])([_a-zA-Z0-9])*
 delim [ \n\t\r]  
 ws {delim}* 
 %%
+{logicand}   {return AND;}
+{logicor}    {return OR;}
 {else}      {return ELSE;}
 {if}        {return IF;}
 {not_equal} {return NE;}

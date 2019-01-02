@@ -20,12 +20,12 @@ class DeclNode;
 //typedef ExpressionStatementNode> ExprStmtPtr;
 //typedef FuncParamDeclNode> FuncParamDeclPtr;
 
-typedef ExpressionNode* ExpressionNodePtr;
-typedef StatementNode* StatementNodePtr;
-typedef DeclNode* DeclNodePtr;
-typedef IdentifierNode* IDPtr;
-typedef ExpressionStatementNode* ExprStmtPtr;
-typedef FuncParamDeclNode* FuncParamDeclPtr;
+typedef ExpressionNode *ExpressionNodePtr;
+typedef StatementNode *StatementNodePtr;
+typedef DeclNode *DeclNodePtr;
+typedef IdentifierNode *IDPtr;
+typedef ExpressionStatementNode *ExprStmtPtr;
+typedef FuncParamDeclNode *FuncParamDeclPtr;
 
 typedef std::vector<FuncParamDeclPtr> FuncParamDeclList;
 typedef std::vector<StatementNodePtr> StatementList;
@@ -37,17 +37,17 @@ class Node
   public:
 	virtual ~Node() {}
 	virtual void Print(int depth) = 0;
-    virtual std::string codeGen() = 0;
+	virtual std::string codeGen() = 0;
 };
 class ExpressionNode : public Node
 {
-public:
-    std::string codeGen() override;
+  public:
+	std::string codeGen() override;
 };
 class NumNode : public ExpressionNode
 {
-	public:
-	static NumNode* GetNumNode(std::string strval);
+  public:
+	static NumNode *GetNumNode(std::string strval);
 };
 class IntNode : public NumNode
 {
@@ -55,7 +55,7 @@ class IntNode : public NumNode
 	long long val;
 	IntNode(long long IntVal) : val(IntVal) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 class FloatNode : public NumNode
 {
@@ -63,7 +63,7 @@ class FloatNode : public NumNode
 	float val;
 	FloatNode(float FloatVal) : val(FloatVal) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 class StringNode : public ExpressionNode
 {
@@ -71,7 +71,7 @@ class StringNode : public ExpressionNode
 	std::string str;
 	StringNode(std::string StrVal) : str(StrVal) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 class BinOpNode : public ExpressionNode
 {
@@ -82,7 +82,7 @@ class BinOpNode : public ExpressionNode
 	BinOpNode(std::string op, ExpressionNodePtr LChild, ExpressionNodePtr RChild)
 		: binop(op), l_child(LChild), r_child(RChild) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 
 class UnaryOpNode : public ExpressionNode
@@ -94,7 +94,7 @@ class UnaryOpNode : public ExpressionNode
 	UnaryOpNode(std::string op, ExpressionNodePtr child, bool isPrefix)
 		: unaryop(op), child(child), isPrefix(isPrefix) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 
 class IdentifierNode : public ExpressionNode
@@ -103,7 +103,7 @@ class IdentifierNode : public ExpressionNode
 	std::string name;
 	IdentifierNode(std::string name) : name(name) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 
 class FunCallNode : public ExpressionNode
@@ -113,7 +113,7 @@ class FunCallNode : public ExpressionNode
 	ExprList params;
 	FunCallNode(std::string name, ExprList params) : name(name), params(params) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 
 class ArrayOffsetNode : public ExpressionNode
@@ -123,7 +123,7 @@ class ArrayOffsetNode : public ExpressionNode
 	ExpressionNodePtr offset;
 	ArrayOffsetNode(ExpressionNodePtr ArrayNode, ExpressionNodePtr Offset) : array(ArrayNode), offset(Offset) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 
 class InitListNode : public ExpressionNode
@@ -132,27 +132,29 @@ class InitListNode : public ExpressionNode
 	ExprList initList;
 	InitListNode(ExprList InitList) : initList(InitList) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 
 class StatementNode : public Node
 {
   public:
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 class ExpressionStatementNode : public StatementNode
 {
   public:
 	ExprList exprs;
-	ExpressionStatementNode(ExpressionNodePtr Expr) {
-		if(Expr!=NULL){
+	ExpressionStatementNode(ExpressionNodePtr Expr)
+	{
+		if (Expr != NULL)
+		{
 			exprs.push_back(Expr);
 		}
 	}
-	ExpressionStatementNode(ExprList exprs): exprs(exprs){}
+	ExpressionStatementNode(ExprList exprs) : exprs(exprs) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 
 class DeclNode : public StatementNode
@@ -165,7 +167,7 @@ class ReturnNode : public StatementNode
 	ExpressionNodePtr expr;
 	ReturnNode(ExpressionNodePtr Expr) : expr(Expr) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 
 class FuncParamDeclNode : public ExpressionNode
@@ -177,7 +179,7 @@ class FuncParamDeclNode : public ExpressionNode
 	FuncParamDeclNode(IDPtr Type, IDPtr ID, ExpressionNodePtr Init)
 		: type(Type), id(ID), initializer(Init) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 
 class FuncDeclNode : public DeclNode
@@ -188,9 +190,9 @@ class FuncDeclNode : public DeclNode
 	FuncParamDeclList funcParamDecls;
 	StatementNodePtr stmt;
 	FuncDeclNode(IDPtr ReturnType, std::string name, FuncParamDeclList FuncParamDecls, StatementNodePtr Stmt)
-		: returnType(ReturnType),name(name), funcParamDecls(FuncParamDecls), stmt(Stmt) {}
+		: returnType(ReturnType), name(name), funcParamDecls(FuncParamDecls), stmt(Stmt) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 class VarDeclNode : public DeclNode
 {
@@ -199,7 +201,7 @@ class VarDeclNode : public DeclNode
 	ExprList declList;
 	VarDeclNode(IDPtr Type, ExprList DeclList) : type(Type), declList(DeclList) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 class BlockNode : public StatementNode
 {
@@ -207,7 +209,7 @@ class BlockNode : public StatementNode
 	StatementList stmtList;
 	BlockNode(StatementList StmtList) : stmtList(StmtList) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 class IfNode : public StatementNode
 {
@@ -218,7 +220,7 @@ class IfNode : public StatementNode
 	IfNode(ExprList Condition, StatementNodePtr Stmt, StatementNodePtr ElseStmt = NULL)
 		: conditions(Condition), stmt(Stmt), else_stmt(ElseStmt) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 class WhileNode : public StatementNode
 {
@@ -227,7 +229,7 @@ class WhileNode : public StatementNode
 	StatementNodePtr stmt;
 	WhileNode(ExprList Condition, StatementNodePtr Stmt) : conditions(Condition), stmt(Stmt) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 class ForNode : public StatementNode
 {
@@ -239,7 +241,7 @@ class ForNode : public StatementNode
 	ForNode(ExprStmtPtr InitStmt, ExprStmtPtr CondStmt, ExprList RangeStmt, StatementNodePtr Stmt)
 		: init_stmt(InitStmt), cond_stmt(CondStmt), range_exprs(RangeStmt), stmt(Stmt) {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 class ProgramNode : public Node
 {
@@ -247,7 +249,7 @@ class ProgramNode : public Node
 	DeclList decls;
 	ProgramNode() {}
 	void Print(int depth) override;
-    std::string codeGen() override;
+	std::string codeGen() override;
 };
 } // namespace AST
 

@@ -4,18 +4,21 @@
     #include "lex.yy.c"
     #include "AST.h"
     #include <memory>
+    #include "symbolTab.h"
     //#define PTR(OBJ) std::shared_ptr<OBJ>
     void yyerror(char* s);
     int yyparse(void);
     extern FILE * yyin;
+    extern char* yytext;
     //int code = 0;
+    struct SymbolTab* symtab;
     void print_info(int code, char* type_str,char* sym_info, int* children_info);
     using namespace AST;
 %}
 %token TYPE ID LP RP LB RB EQ NE COMMA LSB RSB
 %token OP FUNC WHILE FOR IF ELSE INTEGER SEMI RETURN
 %token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST STRING VOID
-%token NUM ADDOP MULTOP GREATER LESSER GREQ LEEQ
+%token NUM ADDOP MULTOP GREATER LESSER GREQ LEEQ AND OR
 %token ASSIGN ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
 %token INC_OP DEC_OP
 %union
@@ -103,8 +106,15 @@ bool_op:    EQ {
             | GREQ{
                 strcpy($<attr>$, ">=");
             }
-            | LEEQ{
+            LEEQ{
                 strcpy($<attr>$, "<=");
+            }
+            ;
+logic_op:   AND{
+                strcpy($<attr>$, "&&");
+            } 
+            | OR{
+                strcpy($<attr>$, "||");
             }
             ;
 id: ID {
@@ -123,7 +133,7 @@ factor: id {
     | func_call_expr {
         $<expr>$ = $<expr>1;
     }
-    | LP expr RP {
+    | LP assign_expr RP {
         $<expr>$ = $<expr>2;
     }
     ;
@@ -174,12 +184,19 @@ bool_expr:   bool_expr bool_op calculate_expr {
             $<expr>$ = $<expr>1;
         }
         ;
-expr_list:  expr_list COMMA bool_expr{
+logic_expr:   logic_expr logic_op bool_expr {
+            $<expr>$ = new BinOpNode($<attr>2, $<expr>1, $<expr>3);
+        }
+        | bool_expr{
+            $<expr>$ = $<expr>1;
+        }
+        ;
+expr_list:  expr_list COMMA logic_expr{
                 //DONE:Add children code to attr
                 $<exprListPtr>$ = $<exprListPtr>1;
                 $<exprListPtr>$->push_back($<expr>3);
             }
-            | bool_expr{
+            | logic_expr{
                 $<exprListPtr>$ = new ExprList();
                 $<exprListPtr>$->push_back($<expr>1);
             }
@@ -187,7 +204,7 @@ expr_list:  expr_list COMMA bool_expr{
 assign_expr: unary_expr assign_op assign_expr {
                         $<expr>$ = new BinOpNode($<attr>2, $<expr>1, $<expr>3);
                     }
-                    | bool_expr {
+                    | logic_expr {
                         $<expr>$ = $<expr>1;
                     }
                     ;
@@ -357,11 +374,12 @@ int main(int argc, char ** argv){
         return 1;
     }
     yyin = file;
+    symtab = NewTab();
     yyparse();
 }
 void yyerror(char* s)
 {
-    fprintf(stderr,"%s",s);
+    fprintf(stderr,"%s:%s",s,yytext);
 }
 int yywrap()
 {
