@@ -370,11 +370,12 @@ string ArrayOffsetNode::codeGen()
 
 string InitListNode::codeGen()
 {
+    string param = "";
     for (auto &i : initList)
     {
-        i->codeGen();
+        param = i->codeGen();
     }
-    return "InitListNode";
+    return param;
 }
 
 string StatementNode::codeGen()
@@ -402,16 +403,20 @@ string ReturnNode::codeGen()
 
 string FuncParamDeclNode::codeGen()
 {
-    string param = initializer->codeGen();
-    string name = id->codeGen();
-    cout << setw(5) << "=" << setw(5) << param << setw(5) << " " << setw(5) << name << endl;
-    if (type->name == "double")
-    {
-        //cout << setw(5) << "malloc" << setw(5) << "64" << setw(5) << " " << setw(5) << name << endl;
+    int param_decl = ++block;
+    cout << setw(10) << param_decl << endl;
+    string param = "";
+    if (initializer) {
+        param = initializer->codeGen();
     }
-    else
-    {
-        //cout << setw(5) << "malloc" << setw(5) << "32" << setw(5) << " " << setw(5) << name << endl;
+    string name = id->codeGen();
+    if (!param.empty()) {
+        cout << setw(10) << " " << setw(10) << "=" << setw(10) << param << setw(10) << " " << setw(10) << name <<endl;
+    }
+    if (type->name == "double") {
+        cout << setw(10) << " " << setw(10) << "malloc" << setw(10) << "64" << setw(10) << " " << setw(10) << name << endl;
+    } else {
+        cout << setw(10) << " " << setw(10) << "malloc" << setw(10) << "32" << setw(10) << " " << setw(10) << name << endl;
     }
     return name;
 }
